@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Projectile.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -86,9 +85,9 @@ void AProjectile::CheckCollision()
 {
 	if (OtherPlayer)
 	{
-		if (OtherPlayer->getUpperPartHurtbox())
+		if (OtherPlayer->getCollisionCapsule())
 		{
-			if (MainHitbox->IsOverlappingActor(OtherPlayer->getUpperPartHurtbox()))
+			if (OtherPlayer->getCollisionCapsule()->IsOverlappingActor(MainHitbox))
 			{
 				isActive = false;
 				OtherPlayer->HitByProjectile(Damage);

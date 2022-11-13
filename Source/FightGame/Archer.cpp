@@ -22,28 +22,17 @@ AArcher::AArcher()
 	HardAttackHitbox.SetScale3D({ 0.3f, 0.7f, 1.2f });
 
 	//Capsule Transforms
-	CapsuleTransform.SetScale3D({ 0.5f, 1.5f, 2.0f });
-	CapsuleTransform.SetLocation({ 0.0f, 0.0f, -10.0f });
+	CapsuleTransform.SetScale3D({ 1.5f, 1.7f, 2.1f });
+	CapsuleTransform.SetLocation({ 0.0f, 0.0f, -15.0f });
 	BlockingCapsuleTransform.SetScale3D({ 1.0f, 2.8f, 1.8f });
-	BlockingCapsuleTransform.SetLocation({ 0.0f, 0.0f, -10.0f });
-	CrouchingCapsuleTransform.SetScale3D({ 0.5f, 1.7f, 1.3f });
+	BlockingCapsuleTransform.SetLocation({ 0.0f, 0.0f, -30.0f });
+	CrouchingCapsuleTransform.SetScale3D({ 1.5f, 2.0f, 1.3f });
 	CrouchingCapsuleTransform.SetLocation({ 0.0f, 0.0f, -35.0f });
 	BlockingCrouchedCapsuleTransform.SetScale3D({ 2.0f, 3.0f, 1.3f });
 	BlockingCrouchedCapsuleTransform.SetLocation(CrouchingCapsuleTransform.GetLocation());
 	AuxBlockigCrouchedCapsuleTransform = 45.0f;
 
 	//SetHurtbox Transformations
-	StandUpHurtboxTransform.SetLocation({ 0.0f, 0.0f, -25.f });
-	StandUpHurtboxTransform.SetScale3D({ 0.3f, 0.6f, 1.4f });
-
-	CrouchingHurtboxTransform.SetLocation({ 0.0f, 0.0f, -48.0f });
-	CrouchingHurtboxTransform.SetScale3D({ 0.3f, 0.9f, 0.7f });
-
-	BlockingHurtboxTransform.SetLocation({ 10.0f, 0.0f, -40.0f });
-	BlockingHurtboxTransform.SetScale3D({ 0.3f, 1.0f, 1.2f });
-
-	BlockingCrouchedHurtboxTransform.SetLocation({ 10.0f, 0.0f, -55.0f });
-	BlockingCrouchedHurtboxTransform.SetScale3D({ 0.3f, 1.1f, 0.8f });
 
 	HeadHurtboxTransform.SetLocation({ 10.0f, 0.0f, 60.0f });
 	HeadHurtboxTransform.SetScale3D({ 0.3f, 0.28f, 0.3f });

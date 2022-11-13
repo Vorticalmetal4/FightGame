@@ -72,11 +72,6 @@ protected:
 	void CheckCollision();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
-	AHitbox* UpperPartHurtbox;
-
-	UStaticMeshComponent* UpperPartMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
 	AHitbox* HeadHurtbox;
 
 	UStaticMeshComponent* HeadMesh;
@@ -208,12 +203,6 @@ protected:
 	FTransform MediumAttackHitbox;
 	FTransform HardAttackHitbox;
 
-
-	FTransform StandUpHurtboxTransform;
-	FTransform CrouchingHurtboxTransform;
-	FTransform BlockingHurtboxTransform;
-	FTransform BlockingCrouchedHurtboxTransform;
-
 	FTransform CapsuleTransform;
 	FTransform BlockingCapsuleTransform;
 	FTransform CrouchingCapsuleTransform;
@@ -250,7 +239,6 @@ protected:
 public:
 	AFightGameCharacter();
 	FVector getLocation() { return GetActorLocation(); }
-	AActor* getUpperPartHurtbox() { return UpperPartHurtbox; }
 	AActor* getHeadHurtbox() { return HeadHurtbox; }
 	AActor* getHitbox() { return Hitbox; }
 	UCapsuleComponent* getCollisionCapsule() { return CollisionCapsule; }

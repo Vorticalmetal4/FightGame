@@ -19,19 +19,6 @@ AKnight::AKnight()
 	HardAttackHitbox.SetScale3D({ 0.3f, 0.4f, 0.6f });
 
 
-	//SetHurtbox Transformations
-	StandUpHurtboxTransform.SetLocation({ 0.0f, 0.0f, -25.f });
-	StandUpHurtboxTransform.SetScale3D({0.3f, 0.5f, 1.4f});
-
-	CrouchingHurtboxTransform.SetLocation({0.0f, 0.0f, -48.0f});
-	CrouchingHurtboxTransform.SetScale3D({0.3f, 0.9f, 0.7f});
-
-	BlockingHurtboxTransform.SetLocation(StandUpHurtboxTransform.GetLocation());
-	BlockingHurtboxTransform.SetScale3D({0.3f, 1.2f, 1.4f});
-
-	BlockingCrouchedHurtboxTransform.SetLocation(CrouchingHurtboxTransform.GetLocation());
-	BlockingCrouchedHurtboxTransform.SetScale3D({0.3f, 1.2f, 1.2f});
-
 	//Capsule Transforms
 	CapsuleTransform.SetScale3D({ 0.5f, 1.5f, 2.0f });
 	CapsuleTransform.SetLocation({0.0f, 0.0f, -10.0f});

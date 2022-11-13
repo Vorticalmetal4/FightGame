@@ -251,14 +251,6 @@ void AFightGameCharacter::SetData(AFightGameCharacter* _OtherPLayer, bool _isPla
 	isPlayer1 = _isPlayer1;
 
 
-	if (UpperPartHurtbox)
-	{
-		UpperPartMesh = UpperPartHurtbox->getMesh();
-		UpperPartMesh->SetRelativeLocation(StandUpHurtboxTransform.GetLocation());
-		UpperPartMesh->SetWorldScale3D(StandUpHurtboxTransform.GetScale3D());
-		UpperPartHurtbox->setInitialHurtboxMaterial();
-	}
-
 	if(HeadHurtbox)
 	{
 		HeadMesh = HeadHurtbox->getMesh();
@@ -288,43 +280,16 @@ void AFightGameCharacter::Block()
 	if (isBlocking && CanMove)
 	{
 		if (!isCrouching)
-		{
 			CurrentPosition = EPosition::Blocking;
-
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadBlockingHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadBlockingHurtboxLocation);
-		}
 		else
-		{
 			CurrentPosition = EPosition::BlockingCrouched;
-
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadBlockingCrouchedHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadBlockingCrouchedHurtboxLocation);
-		}
 	}
 	else
 	{
 		if (!isCrouching)
-		{
 			CurrentPosition = EPosition::StandUp;
-
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadHurtboxTransform.GetLocation());
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadHurtboxLocation);
-		}
 		else
-		{
 			CurrentPosition = EPosition::Crouched;
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadCrouchingHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadCrouchingHurtboxLocation);
-		}
 	}
 	SetCollisionPosition();
 }
@@ -336,21 +301,9 @@ void AFightGameCharacter::StartCrouching()
 		isCrouching = true;
 
 		if (!isBlocking)
-		{
 			CurrentPosition = EPosition::Crouched;
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadCrouchingHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadCrouchingHurtboxLocation);
-		}
 		else
-		{
 			CurrentPosition = EPosition::BlockingCrouched;
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadBlockingCrouchedHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadBlockingCrouchedHurtboxLocation);
-		}
 		SetCollisionPosition();
 	}
 }
@@ -361,23 +314,9 @@ void AFightGameCharacter::StopCrouching()
 	{
 		isCrouching = false;
 		if (!isBlocking)
-		{
 			CurrentPosition = EPosition::StandUp;
-
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadHurtboxTransform.GetLocation());
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadHurtboxLocation);
-		}
 		else
-		{
 			CurrentPosition = EPosition::Blocking;
-
-			if (!isFlipped)
-				HeadMesh->SetRelativeLocation(HeadBlockingHurtboxLocation);
-			else
-				HeadMesh->SetRelativeLocation(FlippedHeadBlockingHurtboxLocation);
-		}
 		SetCollisionPosition();
 	}
 }
@@ -387,32 +326,41 @@ void AFightGameCharacter::SetCollisionPosition()
 	switch (CurrentPosition)
 	{
 		case EPosition::StandUp:
-			UpperPartMesh->SetWorldScale3D(StandUpHurtboxTransform.GetScale3D());
-			UpperPartMesh->SetRelativeLocation(StandUpHurtboxTransform.GetLocation());
 			CollisionCapsule->SetRelativeTransform(CapsuleTransform);
+			if (!isFlipped)
+				HeadMesh->SetRelativeLocation(HeadHurtboxTransform.GetLocation());
+			else
+				HeadMesh->SetRelativeLocation(FlippedHeadHurtboxLocation);
 		break;
 
 		case EPosition::Blocking:
-			UpperPartMesh->SetWorldScale3D(BlockingHurtboxTransform.GetScale3D());
-			UpperPartMesh->SetRelativeLocation(BlockingHurtboxTransform.GetLocation());
 			CollisionCapsule->SetRelativeTransform(BlockingCapsuleTransform);
+			if (!isFlipped)
+				HeadMesh->SetRelativeLocation(HeadBlockingHurtboxLocation);
+			else
+				HeadMesh->SetRelativeLocation(FlippedHeadBlockingHurtboxLocation);
 		break;
 
 		case EPosition::Crouched:
-			UpperPartHurtbox->getMesh()->SetRelativeLocation(CrouchingHurtboxTransform.GetLocation());
-			UpperPartMesh->SetWorldScale3D(CrouchingHurtboxTransform.GetScale3D());
 			CollisionCapsule->SetRelativeTransform(CrouchingCapsuleTransform);
+			if (!isFlipped)
+				HeadMesh->SetRelativeLocation(HeadCrouchingHurtboxLocation);
+			else
+				HeadMesh->SetRelativeLocation(FlippedHeadCrouchingHurtboxLocation);
 		break;
 
 		case EPosition::BlockingCrouched:
-			UpperPartMesh->SetWorldScale3D(BlockingCrouchedHurtboxTransform.GetScale3D());
-			UpperPartMesh->SetRelativeLocation(BlockingCrouchedHurtboxTransform.GetLocation());
 			CollisionCapsule->SetRelativeScale3D(BlockingCrouchedCapsuleTransform.GetScale3D());
-			if(isFlipped)
-				CollisionCapsule->SetRelativeLocation({ BlockingCrouchedCapsuleTransform.GetLocation().X, BlockingCrouchedCapsuleTransform.GetLocation().Y + AuxBlockigCrouchedCapsuleTransform, BlockingCrouchedCapsuleTransform.GetLocation().Z});
+			if (isFlipped)
+			{
+				CollisionCapsule->SetRelativeLocation({ BlockingCrouchedCapsuleTransform.GetLocation().X, BlockingCrouchedCapsuleTransform.GetLocation().Y + AuxBlockigCrouchedCapsuleTransform, BlockingCrouchedCapsuleTransform.GetLocation().Z });
+				HeadMesh->SetRelativeLocation(FlippedHeadBlockingCrouchedHurtboxLocation);
+			}
 			else
-				CollisionCapsule->SetRelativeLocation({ BlockingCrouchedCapsuleTransform.GetLocation().X, BlockingCrouchedCapsuleTransform.GetLocation().Y - AuxBlockigCrouchedCapsuleTransform, BlockingCrouchedCapsuleTransform.GetLocation().Z});
-
+			{
+				CollisionCapsule->SetRelativeLocation({ BlockingCrouchedCapsuleTransform.GetLocation().X, BlockingCrouchedCapsuleTransform.GetLocation().Y - AuxBlockigCrouchedCapsuleTransform, BlockingCrouchedCapsuleTransform.GetLocation().Z });
+				HeadMesh->SetRelativeLocation(HeadBlockingCrouchedHurtboxLocation);
+			}
 		break;
 	}
 }
@@ -476,26 +424,19 @@ void AFightGameCharacter::ApplyDamage(float Damage)
 
 void AFightGameCharacter::CheckCollision()
 {
-
-	/*if (OtherPlayer->getUpperPartHurtbox() && Health > 0) {
-		if (Hitbox->IsOverlappingActor(OtherPlayer->getUpperPartHurtbox()))
+	if (OtherPlayer->getCollisionCapsule() && Health > 0)
+	{
+		if (OtherPlayer->getHeadHurtbox())
 		{
-			OtherPlayer->setDamageZone(EDamageZones::UpperPart);
-			OtherPlayer->ApplyDamage(Hitbox->getDamage());
-		}
-		else if (OtherPlayer->getHeadHurtbox())
-		{
-			if (Hitbox->IsOverlappingActor(OtherPlayer->getHeadHurtbox()))
+			if(Hitbox->IsOverlappingActor(OtherPlayer->getHeadHurtbox()))
 			{
 				OtherPlayer->setDamageZone(EDamageZones::Head);
 				OtherPlayer->ApplyDamage(Hitbox->getDamage());
+
 			}
 		}
-	}*/
 
-	if (OtherPlayer->getCollisionCapsule() && Health > 0)
-	{
-		if (OtherPlayer->getCollisionCapsule()->IsOverlappingActor(Hitbox))
+		else if (OtherPlayer->getCollisionCapsule()->IsOverlappingActor(Hitbox))
 		{
 			OtherPlayer->setDamageZone(EDamageZones::UpperPart);
 			OtherPlayer->ApplyDamage(Hitbox->getDamage());
@@ -511,7 +452,6 @@ void AFightGameCharacter::HitByProjectile(float Damage)
 
 void AFightGameCharacter::Die()
 {
-	UpperPartHurtbox->Reset();
 	HeadHurtbox->Reset();
 	Health = 0.00f;
 }
@@ -520,16 +460,16 @@ void AFightGameCharacter::ChangeBoxesVisibility()
 {
 	bool Hidden;
 
-	if (UpperPartHurtbox->IsHidden())
+	if (CollisionCapsule->bHiddenInGame)
 		Hidden = false;
 	else
 		Hidden = true;
 
-	UpperPartHurtbox->SetActorHiddenInGame(Hidden);
+	CollisionCapsule->SetHiddenInGame(Hidden);
 	HeadHurtbox->SetActorHiddenInGame(Hidden);
 	Hitbox->SetActorHiddenInGame(Hidden);
 
-	OtherPlayer->getUpperPartHurtbox()->SetActorHiddenInGame(Hidden);
+	OtherPlayer->getCollisionCapsule()->SetHiddenInGame(Hidden);
 	OtherPlayer->getHeadHurtbox()->SetActorHiddenInGame(Hidden);
 	OtherPlayer->getHitbox()->SetActorHiddenInGame(Hidden);
 }
