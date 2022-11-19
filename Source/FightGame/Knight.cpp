@@ -9,9 +9,6 @@ AKnight::AKnight()
 	LightAttackHitbox.SetLocation({ 0.0f, 100.0f, 0.0f });
 	LightAttackHitbox.SetScale3D({ 0.3f, 0.93f, 0.5f });
 
-	FrontLightAttackHitbox.SetLocation({0.0f, 30.0f, 0.0f});
-	FrontLightAttackHitbox.SetScale3D({ 0.3f, 0.8f, 0.3f });
-
 	MediumAttackHitbox.SetLocation({ 0.0f, 100.0f, 20.0f });
 	MediumAttackHitbox.SetScale3D({ 0.3f, 1.2f, 0.8f });
 
@@ -41,6 +38,10 @@ AKnight::AKnight()
 	FlippedHeadBlockingHurtboxLocation = { -10.0f, 0.0f, 40.0f };
 	HeadBlockingCrouchedHurtboxLocation = { 10.0f, 0.0f, 10.0f };
 	FlippedHeadBlockingCrouchedHurtboxLocation = { -20.0f, 0.0f, 10.0f };
+
+	LightAttackForce = {0.0f, 50.0f, 0.0f};
+	MediumAttackForce = { 0.0f, 75.0f, 0.0f };
+	HardAttackForce = { 0.0f, 100.0f, 0.0f };
 }
 
 void AKnight::SetParticlesLocationAux()

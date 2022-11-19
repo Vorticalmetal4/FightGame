@@ -28,8 +28,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
 	FVector HitboxLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float HitboxDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FVector AttackForce;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
 	UStaticMeshComponent* Mesh;
@@ -45,7 +48,9 @@ public:
 
 	bool getIsActive() { return isActive; }
 	float getDamage() { return HitboxDamage; }
+	FVector* getAttackForce() { return &AttackForce; }
 	void setDamage(float Damage) { HitboxDamage = Damage; }
+	void setAttackForce(FVector* _AttackForce) { AttackForce = *_AttackForce; }
 
 	UFUNCTION(BlueprintCallable)
 	void Reset();

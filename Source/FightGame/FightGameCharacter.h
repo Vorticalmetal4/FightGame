@@ -82,7 +82,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
 	AHitbox* Hitbox;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hitbox")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	UCapsuleComponent* CollisionCapsule;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerReference")
@@ -199,7 +199,6 @@ protected:
 
 	//Hitbox Attack Position
 	FTransform LightAttackHitbox;
-	FTransform FrontLightAttackHitbox;
 	FTransform MediumAttackHitbox;
 	FTransform HardAttackHitbox;
 
@@ -209,6 +208,9 @@ protected:
 	FTransform BlockingCrouchedCapsuleTransform;
 	float AuxBlockigCrouchedCapsuleTransform;
 
+	FVector LightAttackForce;
+	FVector MediumAttackForce;
+	FVector HardAttackForce;
 
 	FTransform HeadHurtboxTransform;
 	FVector FlippedHeadHurtboxLocation;
@@ -236,11 +238,14 @@ protected:
 
 	void SetCollisionPosition();
 
+	void Pushed(FVector AttackForce);
+
 public:
 	AFightGameCharacter();
 	FVector getLocation() { return GetActorLocation(); }
 	AActor* getHeadHurtbox() { return HeadHurtbox; }
 	AActor* getHitbox() { return Hitbox; }
+	FVector* getAttackForce() { return Hitbox->getAttackForce(); }
 	UCapsuleComponent* getCollisionCapsule() { return CollisionCapsule; }
 	void HitByProjectile(float Damage);
 

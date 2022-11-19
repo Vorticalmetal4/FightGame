@@ -208,6 +208,8 @@ void AFightGameCharacter::LightAttack()
 
 		HitboxTransform = LightAttackHitbox;
 
+		Hitbox->setAttackForce(&LightAttackForce);
+
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
 	}
@@ -222,6 +224,7 @@ void AFightGameCharacter::MediumAttack()
 		isAttacking = true;
 		Hitbox->setDamage(MediumAttackDamage);
 		HitboxTransform = MediumAttackHitbox;
+		Hitbox->setAttackForce(&MediumAttackForce);
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
 	}
@@ -235,6 +238,7 @@ void AFightGameCharacter::HardAttack()
 		isAttacking = true;
 		Hitbox->setDamage(HardAttackDamage);
 		HitboxTransform = HardAttackHitbox;
+		Hitbox->setAttackForce(&HardAttackForce);
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
 	}
@@ -270,8 +274,6 @@ void AFightGameCharacter::SetData(AFightGameCharacter* _OtherPLayer, bool _isPla
 		isFlipped = false;
 	else
 		ChangeDirection();
-
-	CharacterMovement->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 }
 
 void AFightGameCharacter::Block()
@@ -416,24 +418,33 @@ void AFightGameCharacter::ApplyDamage(float Damage)
 	Health -= Damage;
 	OtherPlayer->wasAttackConected = true;
 	wasHurt = true;
+	CharacterMovement->AddImpulse({0.0f, 10000.0f, 10000.0f});
 
 	if (Health < 0.00f)
 		Die();
-	
+	else
+		Pushed(*OtherPlayer->getAttackForce());
+
+}
+
+void AFightGameCharacter::Pushed(FVector AttackForce)
+{
+	if (!isFlipped)
+		LaunchCharacter(AttackForce, true, true);
+	else
+		LaunchCharacter({AttackForce.X, AttackForce.Y * - 1, AttackForce.Z}, true, true);
+
 }
 
 void AFightGameCharacter::CheckCollision()
 {
 	if (OtherPlayer->getCollisionCapsule() && Health > 0)
 	{
-		if (OtherPlayer->getHeadHurtbox())
+		if (Hitbox->IsOverlappingActor(OtherPlayer->getHeadHurtbox()))
 		{
-			if(Hitbox->IsOverlappingActor(OtherPlayer->getHeadHurtbox()))
-			{
-				OtherPlayer->setDamageZone(EDamageZones::Head);
-				OtherPlayer->ApplyDamage(Hitbox->getDamage());
+			OtherPlayer->setDamageZone(EDamageZones::Head);
+			OtherPlayer->ApplyDamage(Hitbox->getDamage());
 
-			}
 		}
 
 		else if (OtherPlayer->getCollisionCapsule()->IsOverlappingActor(Hitbox))
