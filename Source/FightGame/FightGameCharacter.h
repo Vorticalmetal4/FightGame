@@ -24,12 +24,29 @@ enum class EPosition : uint8
 	BlockingCrouched
 };
 
+enum class EAttack : uint8
+{
+	None,
+	Light,
+	LightCrouched,
+	Medium,
+	Hard,
+	Fail
+};
+
 UENUM(BlueprintType)
 enum class EDamageZones : uint8
 {
 	NotHurt UMETA(DisplayName),
 	Head UMETA(DisplayName = "Head"),
 	UpperPart UMETA(DisplayName = "UpperPart")
+};
+
+UENUM(BlueprintType)
+enum class ECombo : uint8
+{
+	None,
+	FirstCombo,
 };
 
 UCLASS(Config=Game, PerObjectConfig)
@@ -119,13 +136,16 @@ protected:
 	float LightAttackDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	float LightCrouchingAttack;
+	float LightCrouchingAttackDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float MediumAttackDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float HardAttackDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float FirstComboDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool isWalking;
@@ -195,12 +215,30 @@ protected:
 	UFUNCTION(Category = "Debugging")
 	void Die();
 
+	//Combo System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combos")
+	ECombo CurrentCombo;
+	int i;
+	int j;
+	int ComboBufferSize;
+	int CombosNumber;
+	int CombosSize[1];
+	EAttack FirstCombo[4];
+	EAttack ComboBuffer[3];
+	EAttack* Combos[1];
+	EAttack Aux1ComboBuffer;
+	EAttack Aux2ComboBuffer;
+	void CheckCombo();
+
+	EAttack* getCombo() { return Combos[0]; }
+
 	void setDamageZone(EDamageZones _DamageZone) { DamageZone = _DamageZone; }
 
 	//Hitbox Attack Position
 	FTransform LightAttackHitbox;
 	FTransform MediumAttackHitbox;
 	FTransform HardAttackHitbox;
+	FTransform FirstComboHitbox;
 
 	FTransform CapsuleTransform;
 	FTransform BlockingCapsuleTransform;
@@ -211,6 +249,7 @@ protected:
 	FVector LightAttackForce;
 	FVector MediumAttackForce;
 	FVector HardAttackForce;
+	FVector FirstComboForce;
 
 	FTransform HeadHurtboxTransform;
 	FVector FlippedHeadHurtboxLocation;

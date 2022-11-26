@@ -30,7 +30,7 @@ AFightGameCharacter::AFightGameCharacter()
 	MaxDistance(850.0f),
 	WalkingSpeed(0.75f),
 	LightAttackDamage(0.05f),
-	LightCrouchingAttack(0.04),
+	LightCrouchingAttackDamage(0.04),
 	MediumAttackDamage(0.075f),
 	HardAttackDamage(0.1f),
 	XPosition(100.0f),
@@ -59,11 +59,19 @@ AFightGameCharacter::AFightGameCharacter()
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
+	ComboBufferSize = std::size(ComboBuffer);
+	CombosNumber = std::size(Combos);
 
+	for (i = 0; i < ComboBufferSize; i++)
+		ComboBuffer[i] = EAttack::None;
+
+	Combos[0] = FirstCombo;
+	CombosSize[0] = std::size(FirstCombo);
+
+	CurrentCombo = ECombo::None;
 	CurrentPosition = EPosition::StandUp;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -202,9 +210,15 @@ void AFightGameCharacter::LightAttack()
 		isAttacking = true;
 
 		if (!isCrouching)
+		{
+			Aux1ComboBuffer = EAttack::Light;
 			Hitbox->setDamage(LightAttackDamage);
+		}
 		else
-			Hitbox->setDamage(LightCrouchingAttack);
+		{
+			Aux1ComboBuffer = EAttack::LightCrouched;
+			Hitbox->setDamage(LightCrouchingAttackDamage);
+		}
 
 		HitboxTransform = LightAttackHitbox;
 
@@ -212,8 +226,9 @@ void AFightGameCharacter::LightAttack()
 
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
+		
+		CheckCombo();
 	}
-
 }
 
 void AFightGameCharacter::MediumAttack()
@@ -225,8 +240,10 @@ void AFightGameCharacter::MediumAttack()
 		Hitbox->setDamage(MediumAttackDamage);
 		HitboxTransform = MediumAttackHitbox;
 		Hitbox->setAttackForce(&MediumAttackForce);
+		Aux1ComboBuffer = EAttack::Medium;
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
+		CheckCombo();
 	}
 }
 
@@ -239,9 +256,62 @@ void AFightGameCharacter::HardAttack()
 		Hitbox->setDamage(HardAttackDamage);
 		HitboxTransform = HardAttackHitbox;
 		Hitbox->setAttackForce(&HardAttackForce);
+		Aux1ComboBuffer = EAttack::Hard;
 		if (!isFlipped)
 			HitboxTransform.SetLocation({ HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z });
+		CheckCombo();
 	}
+}
+
+void AFightGameCharacter::CheckCombo()
+{
+
+	for (i = ComboBufferSize - 1; i >= 0; i--)
+	{	
+		Aux2ComboBuffer = ComboBuffer[i];
+		ComboBuffer[i] = Aux1ComboBuffer;
+		Aux1ComboBuffer = Aux2ComboBuffer;
+	}
+
+	for (i = 0; i < CombosNumber; i++)
+	{
+		for (j = 1; j <= ComboBufferSize; j++)
+		{
+			if (Combos[i][0] != EAttack::Fail)
+			{
+				if (j < CombosSize[i])
+				{
+					if (ComboBuffer[j - 1] != Combos[i][j])
+					{
+						Combos[i][0] = EAttack::Fail;
+						break;
+					}
+					else
+						if (j == ComboBufferSize)
+						{
+							switch (i)
+							{
+								case 0:
+									CurrentCombo = ECombo::FirstCombo;
+									HitboxTransform = FirstComboHitbox;
+									Hitbox->setAttackForce(&FirstComboForce);
+									if (!isFlipped)
+										HitboxTransform.SetLocation({HitboxTransform.GetLocation().X, HitboxTransform.GetLocation().Y * -1, HitboxTransform.GetLocation().Z});
+								break;
+							}
+							UE_LOG(LogTemp, Warning, TEXT("Combo activated"));
+						}
+				}
+				else
+					break;
+			}
+			else
+				break;
+		}
+	}
+
+	for (i = 0; i < std::size(Combos); i++)
+		Combos[i][0] = EAttack::None;
 }
 
 void AFightGameCharacter::SetData(AFightGameCharacter* _OtherPLayer, bool _isPlayer1)
@@ -418,7 +488,6 @@ void AFightGameCharacter::ApplyDamage(float Damage)
 	Health -= Damage;
 	OtherPlayer->wasAttackConected = true;
 	wasHurt = true;
-	CharacterMovement->AddImpulse({0.0f, 10000.0f, 10000.0f});
 
 	if (Health < 0.00f)
 		Die();
@@ -444,7 +513,6 @@ void AFightGameCharacter::CheckCollision()
 		{
 			OtherPlayer->setDamageZone(EDamageZones::Head);
 			OtherPlayer->ApplyDamage(Hitbox->getDamage());
-
 		}
 
 		else if (OtherPlayer->getCollisionCapsule()->IsOverlappingActor(Hitbox))
@@ -502,6 +570,3 @@ void AFightGameCharacter::KillPlayer(int PlayerNumber)
 			OtherPlayer->Die();
 	}
 }
-
-
-

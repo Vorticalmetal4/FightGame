@@ -18,6 +18,9 @@ AArcher::AArcher()
 	HardAttackHitbox.SetLocation({ 0.0f, 65.0f, 0.0f });
 	HardAttackHitbox.SetScale3D({ 0.3f, 0.7f, 1.2f });
 
+	FirstComboHitbox.SetLocation({0.0f, 100.0f, 10.0f});
+	FirstComboHitbox.SetScale3D({0.3f, 1.0f, 0.5f});
+
 	//Capsule Transforms
 	CapsuleTransform.SetScale3D({ 1.5f, 1.7f, 2.1f });
 	CapsuleTransform.SetLocation({ 0.0f, 0.0f, -15.0f });
@@ -54,4 +57,11 @@ AArcher::AArcher()
 	LightAttackForce = { 0.0f, 20.0f, 0.0f };
 	MediumAttackForce = { 0.0f, 75.0f, 0.0f };
 	HardAttackForce = { 0.0f, 100.0f, 0.0f };
+	FirstComboForce = {0.0f, 175.0f, 0.0f};
+
+	//Combos
+	FirstCombo[0] = EAttack::None;
+	FirstCombo[1] = EAttack::Light;
+	FirstCombo[2] = EAttack::Medium;
+	FirstCombo[3] = EAttack::Light;
 }
