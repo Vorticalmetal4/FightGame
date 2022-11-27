@@ -112,11 +112,25 @@ void AFightGameCharacter::MoveRight(float Value)
 				if (MaxDistance >= abs(CharacterMovement->GetActorLocation().Y - OtherPlayerMovement->GetActorLocation().Y) + Value)
 					AddMovementInput({0.0f, -1.0f, 0.0}, Value);
 				WalkingValue = -WalkingSpeed;
+				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
+				{
+					Aux1ComboBuffer = EAttack::Back;
+					CheckCombo();
+				}
+				else
+					CleanComboBuffer();
 			}
 			else
 			{
 				AddMovementInput({0.0f, -1.0f, 0.0f}, Value);
 				WalkingValue = WalkingSpeed;
+				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+				{
+					Aux1ComboBuffer = EAttack::Front;
+					CheckCombo();
+				}
+				else
+					CleanComboBuffer();
 			}
 			if (MovementDirection != EMovementDirection::Jumping)
 			{
@@ -129,13 +143,27 @@ void AFightGameCharacter::MoveRight(float Value)
 			if (isFlipped)
 			{
 				if (MaxDistance >= abs(CharacterMovement->GetActorLocation().Y - OtherPlayerMovement->GetActorLocation().Y) - Value)
-					AddMovementInput({0.0f, -1.0f, 0.0f}, Value);
+					AddMovementInput({ 0.0f, -1.0f, 0.0f }, Value);
 				WalkingValue = -WalkingSpeed;
+				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
+				{
+					Aux1ComboBuffer = EAttack::Back;
+					CheckCombo();
+				}
+				else
+					CleanComboBuffer();
 			}
 			else
 			{
 				AddMovementInput({0.0f, -1.0f, 0.0f}, Value);
 				WalkingValue = WalkingSpeed;
+				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+				{
+					Aux1ComboBuffer = EAttack::Front;
+					CheckCombo();
+				}
+				else
+					CleanComboBuffer();
 			}
 
 			if (MovementDirection != EMovementDirection::Jumping)
@@ -309,9 +337,14 @@ void AFightGameCharacter::CheckCombo()
 				break;
 		}
 	}
-
 	for (i = 0; i < std::size(Combos); i++)
 		Combos[i][0] = EAttack::None;
+}
+
+void AFightGameCharacter::CleanComboBuffer()
+{
+	for (i = 0; i < ComboBufferSize; i++)
+		ComboBuffer[i] = EAttack::None;
 }
 
 void AFightGameCharacter::SetData(AFightGameCharacter* _OtherPLayer, bool _isPlayer1)
@@ -490,7 +523,10 @@ void AFightGameCharacter::ApplyDamage(float Damage)
 	wasHurt = true;
 
 	if (Health < 0.00f)
+	{
 		Die();
+		OtherPlayer->CanMove = false;
+	}
 	else
 		Pushed(*OtherPlayer->getAttackForce());
 

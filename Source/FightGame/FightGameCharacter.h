@@ -31,6 +31,8 @@ enum class EAttack : uint8
 	LightCrouched,
 	Medium,
 	Hard,
+	Front,
+	Back,
 	Fail
 };
 
@@ -229,6 +231,7 @@ protected:
 	EAttack Aux1ComboBuffer;
 	EAttack Aux2ComboBuffer;
 	void CheckCombo();
+	void CleanComboBuffer();
 
 	EAttack* getCombo() { return Combos[0]; }
 

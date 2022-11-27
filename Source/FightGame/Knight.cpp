@@ -49,7 +49,7 @@ AKnight::AKnight()
 
 	FirstCombo[0] = EAttack::None;
 	FirstCombo[1] = EAttack::Light;
-	FirstCombo[2] = EAttack::Medium;
+	FirstCombo[2] = EAttack::Front;
 	FirstCombo[3] = EAttack::Hard;
 }
 

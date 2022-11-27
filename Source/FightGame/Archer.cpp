@@ -62,6 +62,6 @@ AArcher::AArcher()
 	//Combos
 	FirstCombo[0] = EAttack::None;
 	FirstCombo[1] = EAttack::Light;
-	FirstCombo[2] = EAttack::Medium;
+	FirstCombo[2] = EAttack::Back;
 	FirstCombo[3] = EAttack::Light;
 }
