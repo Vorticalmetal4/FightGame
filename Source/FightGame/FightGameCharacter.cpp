@@ -34,6 +34,7 @@ AFightGameCharacter::AFightGameCharacter()
 	MediumAttackDamage(0.075f),
 	HardAttackDamage(0.1f),
 	XPosition(100.0f),
+	AuxComboDistance(15.0f),
 	Scale(FVector(0.0f, 0.0f, 0.0f)),
 	Transform(FTransform()),
 	OtherPlayer(nullptr),
@@ -112,22 +113,28 @@ void AFightGameCharacter::MoveRight(float Value)
 				if (MaxDistance >= abs(CharacterMovement->GetActorLocation().Y - OtherPlayerMovement->GetActorLocation().Y) + Value)
 					AddMovementInput({0.0f, -1.0f, 0.0}, Value);
 				WalkingValue = -WalkingSpeed;
-				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
+				if (abs(CharacterMovement->GetActorLocation().Y - PositionMovementBegan) <= AuxComboDistance)
 				{
-					Aux1ComboBuffer = EAttack::Back;
-					CheckCombo();
+					if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
+					{
+						Aux1ComboBuffer = EAttack::Back;
+						CheckCombo();
+					}
 				}
 				else
 					CleanComboBuffer();
 			}
 			else
 			{
-				AddMovementInput({0.0f, -1.0f, 0.0f}, Value);
+				AddMovementInput({ 0.0f, -1.0f, 0.0f }, Value);
 				WalkingValue = WalkingSpeed;
-				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+				if(abs(CharacterMovement->GetActorLocation().Y - PositionMovementBegan) <= AuxComboDistance)
 				{
-					Aux1ComboBuffer = EAttack::Front;
-					CheckCombo();
+					if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+					{
+						Aux1ComboBuffer = EAttack::Front;
+						CheckCombo();
+					}
 				}
 				else
 					CleanComboBuffer();
@@ -145,22 +152,29 @@ void AFightGameCharacter::MoveRight(float Value)
 				if (MaxDistance >= abs(CharacterMovement->GetActorLocation().Y - OtherPlayerMovement->GetActorLocation().Y) - Value)
 					AddMovementInput({ 0.0f, -1.0f, 0.0f }, Value);
 				WalkingValue = -WalkingSpeed;
-				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
-				{
-					Aux1ComboBuffer = EAttack::Back;
-					CheckCombo();
+				if (abs(CharacterMovement->GetActorLocation().Y -  PositionMovementBegan) <= AuxComboDistance)
+				{	
+					if (ComboBuffer[ComboBufferSize - 1] != EAttack::Back)
+					{
+						Aux1ComboBuffer = EAttack::Back;
+						CheckCombo();
+					}
 				}
 				else
 					CleanComboBuffer();
+				
 			}
 			else
 			{
 				AddMovementInput({0.0f, -1.0f, 0.0f}, Value);
 				WalkingValue = WalkingSpeed;
-				if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+				if (abs(CharacterMovement->GetActorLocation().Y - PositionMovementBegan) <= AuxComboDistance)
 				{
-					Aux1ComboBuffer = EAttack::Front;
-					CheckCombo();
+					if (ComboBuffer[ComboBufferSize - 1] != EAttack::Front)
+					{
+						Aux1ComboBuffer = EAttack::Front;
+						CheckCombo();
+					}
 				}
 				else
 					CleanComboBuffer();
@@ -174,6 +188,7 @@ void AFightGameCharacter::MoveRight(float Value)
 		}
 		else
 		{
+			PositionMovementBegan = CharacterMovement->GetActorLocation().Y;
 			if (MovementDirection != EMovementDirection::Jumping)
 			{
 				MovementDirection = EMovementDirection::NotMoving;
@@ -293,7 +308,6 @@ void AFightGameCharacter::HardAttack()
 
 void AFightGameCharacter::CheckCombo()
 {
-
 	for (i = ComboBufferSize - 1; i >= 0; i--)
 	{	
 		Aux2ComboBuffer = ComboBuffer[i];
@@ -571,7 +585,7 @@ void AFightGameCharacter::Die()
 	Health = 0.00f;
 }
 
-void AFightGameCharacter::ChangeBoxesVisibility()
+void AFightGameCharacter::ChangeBoxesHiddenInGame()
 {
 	bool Hidden;
 

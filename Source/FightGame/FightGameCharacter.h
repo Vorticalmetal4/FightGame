@@ -209,7 +209,7 @@ protected:
 	FVector Scale;
 	
 	UFUNCTION(Exec, Category = "Debugging")
-	void ChangeBoxesVisibility();
+	void ChangeBoxesHiddenInGame();
 
 	UFUNCTION(Exec, Category = "Debugging")
 	void KillPlayer(int PlayerNumber);
@@ -225,6 +225,8 @@ protected:
 	int ComboBufferSize;
 	int CombosNumber;
 	int CombosSize[1];
+	float PositionMovementBegan;
+	float AuxComboDistance;
 	EAttack FirstCombo[4];
 	EAttack ComboBuffer[3];
 	EAttack* Combos[1];
